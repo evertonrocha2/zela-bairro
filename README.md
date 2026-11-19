@@ -9,9 +9,7 @@ MVP Mobile em Flutter · Disciplina: Desenvolvimento Cross-Platform com Flutter 
 
 | Nome completo | RM |
 |---|---|
-| NOME_INTEGRANTE_1 | RM00000 |
-| NOME_INTEGRANTE_2 | RM00000 |
-| NOME_INTEGRANTE_3 | RM00000 |
+| Leticia Rocha Fernandes Vitalino | RM552481 |
 
 ---
 
@@ -143,8 +141,8 @@ lib/
 
 ```bash
 # 1. Clonar o repositório
-git clone <URL_DO_REPOSITORIO>
-cd zela_bairro
+git clone https://github.com/evertonrocha2/zela-bairro.git
+cd zela-bairro
 
 # 2. Instalar as dependências
 flutter pub get
