@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/ocorrencia.dart';
-import 'tag_chip.dart';
+import 'indicadores.dart';
 
 enum AcaoCard { editar, excluir }
 
@@ -29,10 +29,39 @@ class OcorrenciaCard extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 4, 16),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
+              Row(
+                children: [
+                  StatusPill(o.status),
+                  const Spacer(),
+                  PopupMenuButton<AcaoCard>(
+                    tooltip: 'Ações',
+                    onSelected: onAcao,
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(
+                        value: AcaoCard.editar,
+                        child: ListTile(
+                          leading: Icon(Icons.edit_outlined),
+                          title: Text('Editar'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: AcaoCard.excluir,
+                        child: ListTile(
+                          leading: Icon(Icons.delete_outline),
+                          title: Text('Excluir'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -47,43 +76,12 @@ class OcorrenciaCard extends StatelessWidget {
                       o.bairro,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade700,
-                      ),
+                      style: theme.textTheme.bodySmall,
                     ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        TagChip.status(o.status),
-                        TagChip.prioridade(o.prioridade),
-                      ],
-                    ),
+                    const SizedBox(height: 12),
+                    PrioridadeMeter(o.prioridade),
                   ],
                 ),
-              ),
-              PopupMenuButton<AcaoCard>(
-                tooltip: 'Ações',
-                onSelected: onAcao,
-                itemBuilder: (_) => const [
-                  PopupMenuItem(
-                    value: AcaoCard.editar,
-                    child: ListTile(
-                      leading: Icon(Icons.edit_outlined),
-                      title: Text('Editar'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: AcaoCard.excluir,
-                    child: ListTile(
-                      leading: Icon(Icons.delete_outline, color: Colors.red),
-                      title: Text('Excluir'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

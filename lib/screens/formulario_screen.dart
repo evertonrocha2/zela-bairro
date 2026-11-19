@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/theme/app_colors.dart';
 import '../models/ocorrencia.dart';
 import '../providers/ocorrencia_provider.dart';
 import '../utils/validators.dart';
@@ -115,7 +116,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
           key: _formKey,
           autovalidateMode: _autovalidate,
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             children: [
               const SectionTitle('Problema'),
               TextFormField(
@@ -184,7 +185,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 onSelectionChanged: (s) =>
                     setState(() => _prioridade = s.first),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Card(
                 child: SwitchListTile(
                   value: _riscoSeguranca,
@@ -227,7 +228,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
                     ),
                     if (field.hasError)
                       Padding(
-                        padding: const EdgeInsets.only(left: 12),
+                        padding: const EdgeInsets.only(left: 16),
                         child: Text(
                           field.errorText!,
                           style: TextStyle(
@@ -239,23 +240,35 @@ class _FormularioScreenState extends State<FormularioScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              FilledButton(
-                key: const Key('botao_salvar'),
-                onPressed: _salvando ? null : _salvar,
-                child: _salvando
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(
-                        _editando
-                            ? 'Salvar alterações'
-                            : 'Registrar ocorrência',
-                      ),
-              ),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: DecoratedBox(
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          border: Border(top: BorderSide(color: AppColors.border)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: FilledButton(
+              key: const Key('botao_salvar'),
+              onPressed: _salvando ? null : _salvar,
+              child: _salvando
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      _editando ? 'Salvar alterações' : 'Registrar ocorrência',
+                    ),
+            ),
           ),
         ),
       ),

@@ -26,9 +26,10 @@ Buracos na via, postes apagados, lixo descartado irregularmente, ruas que alagam
 ### Funcionalidades do MVP
 - **Dashboard** com indicadores em tempo real: total, abertas, em andamento, resolvidas, taxa de resolução, ocorrências urgentes e contagem por categoria.
 - **CRUD completo de ocorrências**: criar, listar, editar e excluir (com confirmação).
-- **Listagem com filtros por status**, pull-to-refresh e estados de *loading*, lista vazia e erro.
+- **Navegação por abas** (Início, Ocorrências, Sobre) com botão **Reportar** sempre visível.
+- **Listagem com busca** (título ou bairro, sem diferenciar acentos), **filtros por status**, pull-to-refresh e estados de *loading*, lista vazia e erro.
 - **Formulário validado** com categoria, gravidade, risco à segurança e confirmação de veracidade.
-- **Fluxo de status**: Aberta → Em andamento → Resolvida, com um toque na tela de detalhes.
+- **Fluxo de status** com linha do tempo: Aberta → Em andamento → Resolvida, com um toque na tela de detalhes.
 - **Regra de negócio de urgência**: ocorrência não resolvida com prioridade alta **ou** risco à segurança.
 - Tela **Sobre** explicando o problema, o público e os ODS atendidos.
 
@@ -85,7 +86,7 @@ lib/
 ├── core/
 │   ├── constants/ods.dart        # ODS atendidos (cores oficiais da ONU)
 │   ├── routes/app_routes.dart    # Rotas nomeadas + passagem de argumentos
-│   └── theme/app_theme.dart      # ThemeData (cores e tipografia padronizadas)
+│   └── theme/                    # ThemeData, tokens de cor (app_colors.dart) e fontes
 ├── models/ocorrencia.dart        # Entidade + enums + toMap/fromMap + regras
 ├── data/
 │   ├── ocorrencia_repository.dart          # Contrato (interface)
@@ -95,7 +96,7 @@ lib/
 │   ├── repository_factory*.dart            # Escolha por plataforma
 │   └── seed_data.dart                      # Carga inicial
 ├── providers/ocorrencia_provider.dart      # ChangeNotifier (estado + regras)
-├── screens/                      # Home, Lista, Formulário, Detalhes, Sobre
+├── screens/                      # Shell (abas), Home, Lista, Formulário, Detalhes, Sobre
 ├── widgets/                      # Componentes reutilizáveis
 └── utils/                        # Validators e Formatters
 ```
@@ -115,11 +116,41 @@ lib/
 
 ---
 
-## 4. Galeria de telas
+## 4. Design e navegação
 
-| Home / Dashboard | Listagem (ListView) | Detalhes |
+### Identidade visual
+- **Tipografia embarcada** (funciona offline, sem configuração): *Bricolage Grotesque* nos títulos e *Atkinson Hyperlegible* no texto, uma fonte criada para máxima legibilidade (o zero cortado é proposital).
+- **Paleta "zeladoria urbana"**: fundo concreto, tinta quase preta e cobalto para ações.
+- **Cores sem colisão**: cada cor tem um único papel.
+
+| Cor | Papel |
+|---|---|
+| Cobalto `#2E3BC9` | Ações e navegação |
+| Ardósia `#334155` | Status *Aberta* |
+| Âmbar `#92400E` | Status *Em andamento* |
+| Verde `#166534` | Status *Resolvida* |
+| Vermelho `#B42318` | Prioridade alta, risco e exclusão |
+| Cores oficiais ODS | Só como amostra ao lado de texto escuro |
+
+Todos os pares de texto passam de **4.5:1** de contraste (WCAG AA). A prioridade é mostrada por intensidade (1 a 3 barras) e texto, não só por cor.
+
+### Navegação
+- **Barra inferior** com 3 abas: Início, Ocorrências e Sobre. O botão voltar do Android retorna ao Início antes de sair.
+- **Painel interativo**: tocar em um status no painel da Home abre a aba Ocorrências já filtrada.
+- **Ações fixas no rodapé** das telas de Detalhes e Formulário.
+- Rotas nomeadas com argumentos: `/detalhes` recebe o `id`, `/formulario` recebe a `Ocorrencia` para edição.
+
+---
+
+## 5. Galeria de telas
+
+| Home / Dashboard | Home: urgentes e categorias | Listagem (ListView) |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/01_home.png" width="250"> | <img src="docs/screenshots/02_lista.png" width="250"> | <img src="docs/screenshots/04_detalhes.png" width="250"> |
+| <img src="docs/screenshots/01_home.png" width="250"> | <img src="docs/screenshots/01b_home_urgentes.png" width="250"> | <img src="docs/screenshots/02_lista.png" width="250"> |
+
+| Detalhes |
+|:---:|
+| <img src="docs/screenshots/04_detalhes.png" width="250"> |
 
 | Formulário: validação | Formulário: preenchido | Formulário: edição |
 |:---:|:---:|:---:|
@@ -135,7 +166,7 @@ lib/
 
 ---
 
-## 5. Instruções de execução
+## 6. Instruções de execução
 
 **Pré-requisito:** Flutter SDK 3.35+ (Dart 3.9+) (testado com Flutter 3.44.2 / Dart 3.12). Nenhuma outra configuração é necessária: sem API, sem chaves e sem banco externo.
 
@@ -156,19 +187,20 @@ flutter test
 
 ---
 
-## 6. Testes de unidade
+## 7. Testes de unidade
 
-São **30 testes** em `test/`, todos passando com `flutter test`:
+São **33 testes** em `test/`, todos passando com `flutter test`:
 
 | Arquivo | O que valida |
 |---|---|
 | `test/models/ocorrencia_test.dart` | Serialização `toMap`/`fromMap`, `copyWith`, valores padrão e regra de urgência |
 | `test/utils/validators_test.dart` | Todas as validações do formulário e os formatadores |
-| `test/providers/ocorrencia_provider_test.dart` | Carregamento com loading, CRUD, indicadores do dashboard, filtros, alteração de status e tratamento de erro |
+| `test/providers/ocorrencia_provider_test.dart` | Carregamento com loading, CRUD, indicadores do dashboard, filtros, busca, urgentes, alteração de status e tratamento de erro |
 | `test/data/sqlite_ocorrencia_repository_test.dart` | CRUD real em SQLite (em memória via `sqflite_common_ffi`), `onCreate` e seed |
 | `test/widgets/telas_test.dart` | Lista vazia, formulário bloqueando dados inválidos e cadastro válido via Provider |
+| `test/widgets/navegacao_test.dart` | Troca de abas e painel abrindo a lista filtrada |
 
 ```
 $ flutter test
-00:02 +30: All tests passed!
+00:03 +33: All tests passed!
 ```

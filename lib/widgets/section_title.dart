@@ -9,14 +9,17 @@ class SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(texto, style: Theme.of(context).textTheme.titleMedium),
-          ),
-          ?trailing,
-        ],
+      padding: const EdgeInsets.only(bottom: 8),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(texto, style: Theme.of(context).textTheme.titleLarge),
+            ),
+            ?trailing,
+          ],
+        ),
       ),
     );
   }

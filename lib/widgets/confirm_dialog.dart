@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_colors.dart';
+
 /// Diálogo de confirmação reutilizável. Retorna `true` se confirmado.
 Future<bool> mostrarConfirmacao(
   BuildContext context, {
@@ -12,15 +14,17 @@ Future<bool> mostrarConfirmacao(
     builder: (ctx) => AlertDialog(
       title: Text(titulo),
       content: Text(mensagem),
+      actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       actions: [
         TextButton(
+          style: TextButton.styleFrom(foregroundColor: AppColors.ink),
           onPressed: () => Navigator.pop(ctx, false),
           child: const Text('Cancelar'),
         ),
         FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: Colors.red.shade700,
-            minimumSize: const Size(0, 44),
+            backgroundColor: AppColors.danger,
+            minimumSize: const Size(0, 48),
           ),
           onPressed: () => Navigator.pop(ctx, true),
           child: Text(confirmar),
@@ -31,13 +35,15 @@ Future<bool> mostrarConfirmacao(
   return resultado ?? false;
 }
 
+/// Sucesso usa a cor neutra (tinta) para não colidir com o verde de
+/// "Resolvida". Erro usa vermelho.
 void mostrarSnack(BuildContext context, String mensagem, {bool erro = false}) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
         content: Text(mensagem),
-        backgroundColor: erro ? Colors.red.shade700 : const Color(0xFF2E7D32),
+        backgroundColor: erro ? AppColors.danger : AppColors.ink,
       ),
     );
 }

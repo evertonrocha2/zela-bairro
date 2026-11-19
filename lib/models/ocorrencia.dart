@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 /// Categorias de problemas urbanos que o cidadão pode reportar.
 enum Categoria {
@@ -22,14 +22,13 @@ enum Categoria {
 
 /// Nível de urgência da ocorrência.
 enum Prioridade {
-  baixa('Baixa', Color(0xFF2E7D32)),
-  media('Média', Color(0xFFF9A825)),
-  alta('Alta', Color(0xFFC62828));
+  baixa('Baixa'),
+  media('Média'),
+  alta('Alta');
 
-  const Prioridade(this.label, this.color);
+  const Prioridade(this.label);
 
   final String label;
-  final Color color;
 
   static Prioridade fromName(String? name) => Prioridade.values.firstWhere(
     (p) => p.name == name,
@@ -39,14 +38,13 @@ enum Prioridade {
 
 /// Ciclo de vida da ocorrência.
 enum StatusOcorrencia {
-  aberta('Aberta', Color(0xFF1565C0)),
-  emAndamento('Em andamento', Color(0xFFEF6C00)),
-  resolvida('Resolvida', Color(0xFF2E7D32));
+  aberta('Aberta'),
+  emAndamento('Em andamento'),
+  resolvida('Resolvida');
 
-  const StatusOcorrencia(this.label, this.color);
+  const StatusOcorrencia(this.label);
 
   final String label;
-  final Color color;
 
   static StatusOcorrencia fromName(String? name) => StatusOcorrencia.values
       .firstWhere((s) => s.name == name, orElse: () => StatusOcorrencia.aberta);

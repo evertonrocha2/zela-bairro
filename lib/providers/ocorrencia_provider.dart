@@ -15,6 +15,7 @@ class OcorrenciaProvider extends ChangeNotifier {
   bool _carregouUmaVez = false;
   String? _erro;
   StatusOcorrencia? _filtroStatus;
+  String _busca = '';
 
   // ---------- Getters de estado ----------
   List<Ocorrencia> get ocorrencias => List.unmodifiable(_ocorrencias);
@@ -23,9 +24,28 @@ class OcorrenciaProvider extends ChangeNotifier {
   String? get erro => _erro;
   StatusOcorrencia? get filtroStatus => _filtroStatus;
 
-  List<Ocorrencia> get ocorrenciasFiltradas => _filtroStatus == null
-      ? ocorrencias
-      : List.unmodifiable(_ocorrencias.where((o) => o.status == _filtroStatus));
+  String get busca => _busca;
+
+  /// Lista exibida na tela: aplica o filtro de status e a busca por
+  /// título ou bairro (sem diferenciar maiúsculas e acentos).
+  List<Ocorrencia> get ocorrenciasFiltradas {
+    final termo = _normalizar(_busca.trim());
+    return List.unmodifiable(
+      _ocorrencias.where((o) {
+        if (_filtroStatus != null && o.status != _filtroStatus) return false;
+        if (termo.isEmpty) return true;
+        return _normalizar(o.titulo).contains(termo) ||
+            _normalizar(o.bairro).contains(termo);
+      }),
+    );
+  }
+
+  /// Ocorrências urgentes, da mais grave para a menos grave.
+  List<Ocorrencia> get listaUrgentes {
+    final lista = _ocorrencias.where((o) => o.urgente).toList()
+      ..sort((a, b) => b.prioridade.index.compareTo(a.prioridade.index));
+    return List.unmodifiable(lista);
+  }
 
   // ---------- Indicadores do dashboard ----------
   int get total => _ocorrencias.length;
@@ -62,6 +82,12 @@ class OcorrenciaProvider extends ChangeNotifier {
   void filtrarPorStatus(StatusOcorrencia? status) {
     if (_filtroStatus == status) return;
     _filtroStatus = status;
+    notifyListeners();
+  }
+
+  void buscar(String termo) {
+    if (_busca == termo) return;
+    _busca = termo;
     notifyListeners();
   }
 
@@ -125,5 +151,16 @@ class OcorrenciaProvider extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  static String _normalizar(String texto) {
+    const de = 'áàâãäéèêëíìîïóòôõöúùûüç';
+    const para = 'aaaaaeeeeiiiiooooouuuuc';
+    final buffer = StringBuffer();
+    for (final ch in texto.toLowerCase().split('')) {
+      final i = de.indexOf(ch);
+      buffer.write(i >= 0 ? para[i] : ch);
+    }
+    return buffer.toString();
   }
 }

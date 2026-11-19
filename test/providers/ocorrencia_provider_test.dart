@@ -125,6 +125,24 @@ void main() {
       expect(provider.ocorrenciasFiltradas.length, 3);
     });
 
+    test('busca ignora maiúsculas e acentos e combina com o filtro', () async {
+      await provider.carregar();
+
+      provider.buscar('PRACA');
+      expect(provider.ocorrenciasFiltradas.single.titulo, 'Lixo na praça');
+
+      provider.buscar('poste');
+      expect(provider.ocorrenciasFiltradas.length, 2);
+
+      provider.filtrarPorStatus(StatusOcorrencia.aberta);
+      expect(provider.ocorrenciasFiltradas.single.titulo, 'Poste apagado');
+    });
+
+    test('listaUrgentes traz só as urgentes', () async {
+      await provider.carregar();
+      expect(provider.listaUrgentes.map((o) => o.titulo), ['Poste apagado']);
+    });
+
     test('erro no repositório é exposto sem quebrar o app', () async {
       final comFalha = OcorrenciaProvider(RepositorioComFalha());
 

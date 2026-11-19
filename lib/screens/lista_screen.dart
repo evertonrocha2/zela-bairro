@@ -2,22 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/routes/app_routes.dart';
+import '../core/theme/app_colors.dart';
 import '../models/ocorrencia.dart';
 import '../providers/ocorrencia_provider.dart';
 import '../widgets/confirm_dialog.dart';
 import '../widgets/feedback_states.dart';
 import '../widgets/ocorrencia_card.dart';
 
-/// Tela 2: listagem dinâmica com ListView.separated, filtros e estados
-/// de loading, lista vazia e erro.
-class ListaScreen extends StatelessWidget {
+/// Tela 2: listagem dinâmica com ListView.separated, busca, filtros e
+/// estados de loading, lista vazia e erro.
+class ListaScreen extends StatefulWidget {
   const ListaScreen({super.key});
 
-  Future<void> _onAcao(
-    BuildContext context,
-    Ocorrencia o,
-    AcaoCard acao,
-  ) async {
+  @override
+  State<ListaScreen> createState() => _ListaScreenState();
+}
+
+class _ListaScreenState extends State<ListaScreen> {
+  final _buscaCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _buscaCtrl.dispose();
+    super.dispose();
+  }
+
+  void _limparBusca() {
+    _buscaCtrl.clear();
+    context.read<OcorrenciaProvider>().buscar('');
+    setState(() {});
+  }
+
+  Future<void> _onAcao(Ocorrencia o, AcaoCard acao) async {
     switch (acao) {
       case AcaoCard.editar:
         await Navigator.pushNamed(context, AppRoutes.formulario, arguments: o);
@@ -27,9 +43,9 @@ class ListaScreen extends StatelessWidget {
           titulo: 'Excluir ocorrência?',
           mensagem: 'Isso apaga "${o.titulo}". Não dá para desfazer.',
         );
-        if (!ok || !context.mounted) return;
+        if (!ok || !mounted) return;
         final sucesso = await context.read<OcorrenciaProvider>().remover(o.id!);
-        if (!context.mounted) return;
+        if (!mounted) return;
         mostrarSnack(
           context,
           sucesso ? 'Ocorrência excluída' : 'Erro ao excluir ocorrência',
@@ -42,12 +58,30 @@ class ListaScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Ocorrências')),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.pushNamed(context, AppRoutes.formulario),
-        label: const Text('Reportar'),
-      ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: TextField(
+              controller: _buscaCtrl,
+              textInputAction: TextInputAction.search,
+              onChanged: (v) {
+                context.read<OcorrenciaProvider>().buscar(v);
+                setState(() {});
+              },
+              decoration: InputDecoration(
+                hintText: 'Buscar por título ou bairro',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _buscaCtrl.text.isEmpty
+                    ? null
+                    : IconButton(
+                        tooltip: 'Limpar busca',
+                        icon: const Icon(Icons.close),
+                        onPressed: _limparBusca,
+                      ),
+              ),
+            ),
+          ),
           const _FiltroStatus(),
           Expanded(
             child: Consumer<OcorrenciaProvider>(
@@ -67,6 +101,12 @@ class ListaScreen extends StatelessWidget {
 
                 final itens = provider.ocorrenciasFiltradas;
                 if (itens.isEmpty) {
+                  if (provider.busca.trim().isNotEmpty) {
+                    return const EmptyState(
+                      titulo: 'Nenhuma ocorrência encontrada',
+                      mensagem: 'Tente outro termo ou limpe a busca.',
+                    );
+                  }
                   final filtrando = provider.filtroStatus != null;
                   return EmptyState(
                     titulo: filtrando
@@ -82,7 +122,7 @@ class ListaScreen extends StatelessWidget {
                 return RefreshIndicator(
                   onRefresh: provider.carregar,
                   child: ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
                     itemCount: itens.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
@@ -95,7 +135,7 @@ class ListaScreen extends StatelessWidget {
                           AppRoutes.detalhes,
                           arguments: o.id,
                         ),
-                        onAcao: (acao) => _onAcao(context, o, acao),
+                        onAcao: (acao) => _onAcao(o, acao),
                       );
                     },
                   ),
@@ -121,8 +161,15 @@ class _FiltroStatus extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.only(right: 8),
         child: ChoiceChip(
-          label: Text('$label ($qtd)'),
+          label: Text(
+            '$label ($qtd)',
+            style: TextStyle(
+              color: atual == valor ? Colors.white : AppColors.ink,
+            ),
+          ),
           selected: atual == valor,
+          selectedColor: AppColors.ink,
+          backgroundColor: AppColors.surface,
           onSelected: (_) =>
               context.read<OcorrenciaProvider>().filtrarPorStatus(valor),
         ),
@@ -133,7 +180,7 @@ class _FiltroStatus extends StatelessWidget {
       height: 56,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(16, 10, 8, 6),
+        padding: const EdgeInsets.fromLTRB(16, 4, 8, 8),
         children: [
           chip('Todas', null, provider.total),
           for (final s in StatusOcorrencia.values)
