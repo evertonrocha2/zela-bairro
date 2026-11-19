@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 
 /// Categorias de problemas urbanos que o cidadão pode reportar.
 enum Categoria {
-  buraco('Buraco na via', Icons.warning_amber_rounded),
-  iluminacao('Iluminação pública', Icons.lightbulb_outline),
-  lixo('Descarte irregular de lixo', Icons.delete_outline),
-  alagamento('Alagamento / Enchente', Icons.water_drop_outlined),
-  calcada('Calçada / Acessibilidade', Icons.accessible_forward),
-  sinalizacao('Sinalização / Semáforo', Icons.traffic_outlined),
-  outros('Outros', Icons.more_horiz);
+  buraco('Buraco na via'),
+  iluminacao('Iluminação pública'),
+  lixo('Descarte irregular de lixo'),
+  alagamento('Alagamento / Enchente'),
+  calcada('Calçada / Acessibilidade'),
+  sinalizacao('Sinalização / Semáforo'),
+  outros('Outros');
 
-  const Categoria(this.label, this.icon);
+  const Categoria(this.label);
 
   final String label;
-  final IconData icon;
 
   static Categoria fromName(String? name) => Categoria.values.firstWhere(
     (c) => c.name == name,
@@ -40,15 +39,14 @@ enum Prioridade {
 
 /// Ciclo de vida da ocorrência.
 enum StatusOcorrencia {
-  aberta('Aberta', Color(0xFF1565C0), Icons.flag_outlined),
-  emAndamento('Em andamento', Color(0xFFEF6C00), Icons.build_circle_outlined),
-  resolvida('Resolvida', Color(0xFF2E7D32), Icons.check_circle_outline);
+  aberta('Aberta', Color(0xFF1565C0)),
+  emAndamento('Em andamento', Color(0xFFEF6C00)),
+  resolvida('Resolvida', Color(0xFF2E7D32));
 
-  const StatusOcorrencia(this.label, this.color, this.icon);
+  const StatusOcorrencia(this.label, this.color);
 
   final String label;
   final Color color;
-  final IconData icon;
 
   static StatusOcorrencia fromName(String? name) => StatusOcorrencia.values
       .firstWhere((s) => s.name == name, orElse: () => StatusOcorrencia.aberta);

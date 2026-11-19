@@ -22,20 +22,13 @@ class OdsBadge extends StatelessWidget {
           color: ods.cor,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(ods.icone, color: Colors.white, size: compacto ? 16 : 20),
-            const SizedBox(width: 6),
-            Text(
-              'ODS ${ods.numero}',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-                fontSize: compacto ? 13 : 15,
-              ),
-            ),
-          ],
+        child: Text(
+          'ODS ${ods.numero}',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: compacto ? 13 : 15,
+          ),
         ),
       ),
     );

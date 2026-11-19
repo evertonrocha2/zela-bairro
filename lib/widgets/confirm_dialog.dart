@@ -10,7 +10,6 @@ Future<bool> mostrarConfirmacao(
   final resultado = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
-      icon: const Icon(Icons.delete_forever_outlined, color: Colors.red),
       title: Text(titulo),
       content: Text(mensagem),
       actions: [
@@ -37,16 +36,7 @@ void mostrarSnack(BuildContext context, String mensagem, {bool erro = false}) {
     ..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              erro ? Icons.error_outline : Icons.check_circle_outline,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 10),
-            Expanded(child: Text(mensagem)),
-          ],
-        ),
+        content: Text(mensagem),
         backgroundColor: erro ? Colors.red.shade700 : const Color(0xFF2E7D32),
       ),
     );

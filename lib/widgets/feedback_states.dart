@@ -21,20 +21,18 @@ class LoadingState extends StatelessWidget {
   }
 }
 
-/// Mensagem amigável quando não há itens para exibir.
+/// Mensagem quando não há itens para exibir.
 class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
     required this.titulo,
-    required this.mensagem,
-    this.icone = Icons.inbox_outlined,
+    this.mensagem,
     this.acaoLabel,
     this.onAcao,
   });
 
   final String titulo;
-  final String mensagem;
-  final IconData icone;
+  final String? mensagem;
   final String? acaoLabel;
   final VoidCallback? onAcao;
 
@@ -47,28 +45,24 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icone, size: 72, color: theme.colorScheme.primary),
-            const SizedBox(height: 16),
             Text(
               titulo,
               style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
-            Text(
-              mensagem,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey.shade700,
+            if (mensagem != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                mensagem!,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey.shade700,
+                ),
               ),
-            ),
+            ],
             if (acaoLabel != null && onAcao != null) ...[
               const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: onAcao,
-                icon: const Icon(Icons.add),
-                label: Text(acaoLabel!),
-              ),
+              FilledButton(onPressed: onAcao, child: Text(acaoLabel!)),
             ],
           ],
         ),
@@ -93,20 +87,15 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.cloud_off_outlined,
-              size: 72,
-              color: theme.colorScheme.error,
+            Text(
+              mensagem,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleMedium,
             ),
-            const SizedBox(height: 16),
-            Text('Ops! Algo deu errado', style: theme.textTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(mensagem, textAlign: TextAlign.center),
             const SizedBox(height: 24),
-            OutlinedButton.icon(
+            OutlinedButton(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Tentar novamente'),
+              child: const Text('Tentar novamente'),
             ),
           ],
         ),

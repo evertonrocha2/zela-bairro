@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/ocorrencia.dart';
-import '../utils/formatters.dart';
 import 'tag_chip.dart';
 
 enum AcaoCard { editar, excluir }
@@ -29,16 +28,10 @@ class OcorrenciaCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+          padding: const EdgeInsets.fromLTRB(16, 12, 4, 16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: o.prioridade.color.withValues(alpha: 0.12),
-                child: Icon(o.categoria.icon, color: o.prioridade.color),
-              ),
-              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,40 +42,22 @@ class OcorrenciaCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleMedium,
                     ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.place_outlined,
-                          size: 14,
-                          color: Colors.grey.shade600,
-                        ),
-                        const SizedBox(width: 2),
-                        Expanded(
-                          child: Text(
-                            '${o.bairro} · ${Formatters.relativo(o.criadoEm)}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.grey.shade700,
-                            ),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 4),
+                    Text(
+                      o.bairro,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey.shade700,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         TagChip.status(o.status),
                         TagChip.prioridade(o.prioridade),
-                        if (o.urgente)
-                          const TagChip(
-                            texto: 'Urgente',
-                            cor: Color(0xFFC62828),
-                            icone: Icons.priority_high,
-                          ),
                       ],
                     ),
                   ],

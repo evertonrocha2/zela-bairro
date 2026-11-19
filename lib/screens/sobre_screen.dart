@@ -17,7 +17,6 @@ class SobreScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           const _BlocoTexto(
-            icone: Icons.report_problem_outlined,
             titulo: 'O problema',
             texto:
                 'Buracos, lixo descartado, postes apagados e ruas que alagam '
@@ -27,22 +26,20 @@ class SobreScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const _BlocoTexto(
-            icone: Icons.groups_outlined,
             titulo: 'Para quem',
             texto:
                 'Moradores, associações de bairro e agentes públicos de '
-                'zeladoria urbana, de grandes centros a pequenas cidades.',
+                'zeladoria urbana.',
           ),
           const SizedBox(height: 12),
           const _BlocoTexto(
-            icone: Icons.lightbulb_outline,
             titulo: 'A solução',
             texto:
-                'Um app simples para registrar o problema com categoria, local '
-                'e gravidade, acompanhar o status até a solução e enxergar '
-                'indicadores do bairro em um painel.',
+                'Registre o problema com categoria, local e gravidade. '
+                'Acompanhe o status até a solução e veja os indicadores do '
+                'bairro no painel.',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           const SectionTitle('Objetivos de Desenvolvimento Sustentável'),
           for (final ods in odsAtendidos) ...[
             Card(
@@ -52,7 +49,7 @@ class SobreScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     OdsBadge(ods: ods),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     Text(ods.titulo, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 4),
                     Text(ods.comoAtendemos),
@@ -78,13 +75,8 @@ class SobreScreen extends StatelessWidget {
 }
 
 class _BlocoTexto extends StatelessWidget {
-  const _BlocoTexto({
-    required this.icone,
-    required this.titulo,
-    required this.texto,
-  });
+  const _BlocoTexto({required this.titulo, required this.texto});
 
-  final IconData icone;
   final String titulo;
   final String texto;
 
@@ -94,21 +86,12 @@ class _BlocoTexto extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icone, color: theme.colorScheme.primary, size: 28),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(titulo, style: theme.textTheme.titleMedium),
-                  const SizedBox(height: 4),
-                  Text(texto),
-                ],
-              ),
-            ),
+            Text(titulo, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(texto),
           ],
         ),
       ),

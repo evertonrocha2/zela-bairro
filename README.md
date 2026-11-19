@@ -24,7 +24,7 @@ Buracos na via, postes apagados, lixo descartado irregularmente, ruas que alagam
 - **Agentes públicos de zeladoria**, que enxergam os indicadores e atualizam o status.
 
 ### Funcionalidades do MVP
-- **Dashboard** com indicadores em tempo real: total, abertas, em andamento, resolvidas, taxa de resolução, ocorrências urgentes e gráfico por categoria.
+- **Dashboard** com indicadores em tempo real: total, abertas, em andamento, resolvidas, taxa de resolução, ocorrências urgentes e contagem por categoria.
 - **CRUD completo de ocorrências**: criar, listar, editar e excluir (com confirmação).
 - **Listagem com filtros por status**, pull-to-refresh e estados de *loading*, lista vazia e erro.
 - **Formulário validado** com categoria, gravidade, risco à segurança e confirmação de veracidade.

@@ -96,9 +96,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
     if (sucesso) {
       mostrarSnack(
         context,
-        _editando
-            ? 'Ocorrência atualizada com sucesso!'
-            : 'Ocorrência registrada! Obrigado por cuidar do seu bairro.',
+        _editando ? 'Ocorrência atualizada' : 'Ocorrência registrada',
       );
       Navigator.pop(context, true);
     } else {
@@ -119,7 +117,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              const SectionTitle('O que está acontecendo?'),
+              const SectionTitle('Problema'),
               TextFormField(
                 key: const Key('campo_titulo'),
                 controller: _tituloCtrl,
@@ -128,30 +126,17 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Título *',
                   hintText: 'Ex.: Buraco grande na esquina',
-                  prefixIcon: Icon(Icons.title),
                 ),
                 validator: Validators.titulo,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               DropdownButtonFormField<Categoria>(
                 key: const Key('campo_categoria'),
                 initialValue: _categoria,
-                decoration: const InputDecoration(
-                  labelText: 'Categoria *',
-                  prefixIcon: Icon(Icons.category_outlined),
-                ),
+                decoration: const InputDecoration(labelText: 'Categoria *'),
                 items: [
                   for (final c in Categoria.values)
-                    DropdownMenuItem(
-                      value: c,
-                      child: Row(
-                        children: [
-                          Icon(c.icon, size: 20),
-                          const SizedBox(width: 8),
-                          Text(c.label),
-                        ],
-                      ),
-                    ),
+                    DropdownMenuItem(value: c, child: Text(c.label)),
                 ],
                 onChanged: (v) => setState(() => _categoria = v),
                 validator: (v) => v == null ? 'Selecione uma categoria' : null,
@@ -164,13 +149,12 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 maxLines: 5,
                 decoration: const InputDecoration(
                   labelText: 'Descrição *',
-                  hintText: 'Descreva o problema e como ele afeta as pessoas',
                   alignLabelWithHint: true,
                 ),
                 validator: Validators.descricao,
               ),
               const SizedBox(height: 24),
-              const SectionTitle('Onde?'),
+              const SectionTitle('Local'),
               TextFormField(
                 key: const Key('campo_endereco'),
                 controller: _enderecoCtrl,
@@ -178,7 +162,6 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Endereço *',
                   hintText: 'Rua, número ou ponto de referência',
-                  prefixIcon: Icon(Icons.signpost_outlined),
                 ),
                 validator: Validators.endereco,
               ),
@@ -187,10 +170,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 key: const Key('campo_bairro'),
                 controller: _bairroCtrl,
                 textInputAction: TextInputAction.done,
-                decoration: const InputDecoration(
-                  labelText: 'Bairro *',
-                  prefixIcon: Icon(Icons.place_outlined),
-                ),
+                decoration: const InputDecoration(labelText: 'Bairro *'),
                 validator: Validators.bairro,
               ),
               const SizedBox(height: 24),
@@ -209,7 +189,6 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 child: SwitchListTile(
                   value: _riscoSeguranca,
                   onChanged: (v) => setState(() => _riscoSeguranca = v),
-                  secondary: const Icon(Icons.health_and_safety_outlined),
                   title: const Text('Oferece risco à segurança'),
                   subtitle: const Text('Risco de acidentes, quedas ou doenças'),
                 ),
@@ -218,10 +197,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 const SizedBox(height: 16),
                 DropdownButtonFormField<StatusOcorrencia>(
                   initialValue: _status,
-                  decoration: const InputDecoration(
-                    labelText: 'Status',
-                    prefixIcon: Icon(Icons.timelapse),
-                  ),
+                  decoration: const InputDecoration(labelText: 'Status'),
                   items: [
                     for (final s in StatusOcorrencia.values)
                       DropdownMenuItem(value: s, child: Text(s.label)),
@@ -264,22 +240,20 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              FilledButton.icon(
+              FilledButton(
                 key: const Key('botao_salvar'),
                 onPressed: _salvando ? null : _salvar,
-                icon: _salvando
+                child: _salvando
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.save_outlined),
-                label: Text(
-                  _editando ? 'Salvar alterações' : 'Registrar ocorrência',
-                ),
+                    : Text(
+                        _editando
+                            ? 'Salvar alterações'
+                            : 'Registrar ocorrência',
+                      ),
               ),
             ],
           ),

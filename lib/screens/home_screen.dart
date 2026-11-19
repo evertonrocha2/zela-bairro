@@ -26,13 +26,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          children: [
-            Icon(Icons.location_city),
-            SizedBox(width: 8),
-            Text('ZelaBairro'),
-          ],
-        ),
+        title: const Text('ZelaBairro'),
         actions: [
           IconButton(
             tooltip: 'Sobre o projeto e ODS',
@@ -47,13 +41,13 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
           children: [
             const _HeroBanner(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 32),
             SectionTitle(
               'Panorama do bairro',
               trailing: provider.isLoading
                   ? const SizedBox(
-                      width: 18,
-                      height: 18,
+                      width: 16,
+                      height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : null,
@@ -64,23 +58,21 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             _CardResolucao(provider: provider),
-            const SizedBox(height: 20),
+            const SizedBox(height: 32),
             if (provider.porCategoria.isNotEmpty) ...[
               const SectionTitle('Problemas por categoria'),
               _CardCategorias(porCategoria: provider.porCategoria),
-              const SizedBox(height: 20),
+              const SizedBox(height: 32),
             ],
-            FilledButton.icon(
+            FilledButton(
               onPressed: () =>
                   Navigator.pushNamed(context, AppRoutes.formulario),
-              icon: const Icon(Icons.add_location_alt_outlined),
-              label: const Text('Reportar novo problema'),
+              child: const Text('Reportar novo problema'),
             ),
             const SizedBox(height: 12),
-            OutlinedButton.icon(
+            OutlinedButton(
               onPressed: () => _abrirLista(context),
-              icon: const Icon(Icons.list_alt),
-              label: const Text('Ver todas as ocorrências'),
+              child: const Text('Ver todas as ocorrências'),
             ),
           ],
         ),
@@ -97,37 +89,27 @@ class _HeroBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
+        color: AppTheme.primaria,
         borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
-          colors: [AppTheme.primaria, Color(0xFF26A69A)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'A próxima grande inovação\npode estar na sua rua.',
+            'Reporte problemas do seu bairro e acompanhe até a solução.',
             style: TextStyle(
               color: Colors.white,
               fontSize: 22,
-              fontWeight: FontWeight.w800,
-              height: 1.2,
+              fontWeight: FontWeight.w600,
+              height: 1.25,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Reporte buracos, lixo, alagamentos e falhas de iluminação. '
-            'Acompanhe até a solução.',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-          ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           const Text(
             'ODS da ONU atendidos',
             style: TextStyle(
               color: Colors.white,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 12,
             ),
           ),
@@ -158,7 +140,6 @@ class _GradeIndicadores extends StatelessWidget {
       StatCard(
         label: 'Total reportado',
         valor: '${provider.total}',
-        icone: Icons.assignment_outlined,
         cor: AppTheme.primaria,
         onTap: () => onTapStatus(null),
       ),
@@ -166,7 +147,6 @@ class _GradeIndicadores extends StatelessWidget {
         StatCard(
           label: s.label,
           valor: '${provider.contarPorStatus(s)}',
-          icone: s.icon,
           cor: s.color,
           onTap: () => onTapStatus(s),
         ),
@@ -197,6 +177,7 @@ class _CardResolucao extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final urgentes = provider.urgentes;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -220,28 +201,14 @@ class _CardResolucao extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: provider.taxaResolucao,
-                minHeight: 10,
-                color: StatusOcorrencia.resolvida.color,
-                backgroundColor: Colors.grey.shade200,
+            Text(
+              '$urgentes ${urgentes == 1 ? 'urgente' : 'urgentes'} '
+              'aguardando solução',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: urgentes > 0
+                    ? const Color(0xFFC62828)
+                    : Colors.grey.shade700,
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const Icon(Icons.priority_high, color: Color(0xFFC62828)),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    '${provider.urgentes} ocorrência(s) urgente(s) '
-                    'aguardando solução',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ),
-              ],
             ),
           ],
         ),
@@ -257,36 +224,28 @@ class _CardCategorias extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maior = porCategoria.values.fold<int>(0, (a, b) => a > b ? a : b);
+    final entradas = porCategoria.entries.toList();
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          children: [
-            for (final e in porCategoria.entries)
-              ListTile(
-                dense: true,
-                leading: Icon(e.key.icon, color: AppTheme.primaria),
-                title: Text(e.key.label),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: LinearProgressIndicator(
-                    value: maior == 0 ? 0 : e.value / maior,
-                    minHeight: 6,
-                    borderRadius: BorderRadius.circular(6),
-                    backgroundColor: Colors.grey.shade200,
-                  ),
-                ),
-                trailing: Text(
-                  '${e.value}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 16,
-                  ),
+      child: Column(
+        children: [
+          for (var i = 0; i < entradas.length; i++) ...[
+            if (i > 0) const Divider(height: 1, indent: 16, endIndent: 16),
+            ListTile(
+              dense: true,
+              title: Text(
+                entradas[i].key.label,
+                style: const TextStyle(fontSize: 14),
+              ),
+              trailing: Text(
+                '${entradas[i].value}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
                 ),
               ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

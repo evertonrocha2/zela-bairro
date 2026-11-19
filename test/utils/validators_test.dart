@@ -40,26 +40,17 @@ void main() {
   });
 
   group('Formatters', () {
+    test('dataHora usa o formato brasileiro', () {
+      expect(
+        Formatters.dataHora(DateTime(2026, 11, 19, 8, 5)),
+        '19/11/2026 08:05',
+      );
+    });
+
     test('percentual arredonda para inteiro', () {
       expect(Formatters.percentual(0), '0%');
       expect(Formatters.percentual(0.666), '67%');
       expect(Formatters.percentual(1), '100%');
-    });
-
-    test('data relativa: hoje, ontem e há N dias', () {
-      final agora = DateTime(2026, 11, 19, 15);
-      expect(
-        Formatters.relativo(DateTime(2026, 11, 19, 8), agora: agora),
-        'hoje',
-      );
-      expect(
-        Formatters.relativo(DateTime(2026, 11, 18, 23), agora: agora),
-        'ontem',
-      );
-      expect(
-        Formatters.relativo(DateTime(2026, 11, 14), agora: agora),
-        'há 5 dias',
-      );
     });
   });
 }

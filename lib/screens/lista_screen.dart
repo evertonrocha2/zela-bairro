@@ -25,7 +25,7 @@ class ListaScreen extends StatelessWidget {
         final ok = await mostrarConfirmacao(
           context,
           titulo: 'Excluir ocorrência?',
-          mensagem: '"${o.titulo}" será removida permanentemente.',
+          mensagem: 'Isso apaga "${o.titulo}". Não dá para desfazer.',
         );
         if (!ok || !context.mounted) return;
         final sucesso = await context.read<OcorrenciaProvider>().remover(o.id!);
@@ -44,7 +44,6 @@ class ListaScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Ocorrências')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.pushNamed(context, AppRoutes.formulario),
-        icon: const Icon(Icons.add),
         label: const Text('Reportar'),
       ),
       body: Column(
@@ -70,22 +69,13 @@ class ListaScreen extends StatelessWidget {
                 if (itens.isEmpty) {
                   final filtrando = provider.filtroStatus != null;
                   return EmptyState(
-                    icone: Icons.check_circle_outline,
                     titulo: filtrando
-                        ? 'Nada por aqui'
+                        ? 'Nenhuma ocorrência com status '
+                              '"${provider.filtroStatus!.label}"'
                         : 'Nenhuma ocorrência registrada',
                     mensagem: filtrando
-                        ? 'Não há ocorrências com o status '
-                              '"${provider.filtroStatus!.label}".'
-                        : 'Seu bairro está em dia! Viu algum problema? '
-                              'Reporte agora mesmo.',
-                    acaoLabel: filtrando ? null : 'Reportar problema',
-                    onAcao: filtrando
                         ? null
-                        : () => Navigator.pushNamed(
-                            context,
-                            AppRoutes.formulario,
-                          ),
+                        : 'Toque em Reportar para registrar um problema.',
                   );
                 }
 
@@ -94,7 +84,7 @@ class ListaScreen extends StatelessWidget {
                   child: ListView.separated(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
                     itemCount: itens.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 10),
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final o = itens[index];
                       return OcorrenciaCard(

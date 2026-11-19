@@ -21,7 +21,7 @@ class DetalhesScreen extends StatelessWidget {
     final ok = await mostrarConfirmacao(
       context,
       titulo: 'Excluir ocorrência?',
-      mensagem: '"${o.titulo}" será removida permanentemente.',
+      mensagem: 'Isso apaga "${o.titulo}". Não dá para desfazer.',
     );
     if (!ok || !context.mounted) return;
     final sucesso = await context.read<OcorrenciaProvider>().remover(o.id!);
@@ -59,36 +59,14 @@ class DetalhesScreen extends StatelessWidget {
     if (o == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Detalhes')),
-        body: const EmptyState(
-          icone: Icons.search_off,
-          titulo: 'Ocorrência não encontrada',
-          mensagem: 'Ela pode ter sido excluída.',
-        ),
+        body: const EmptyState(titulo: 'Ocorrência não encontrada'),
       );
     }
 
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detalhes da ocorrência'),
-        actions: [
-          IconButton(
-            tooltip: 'Editar',
-            icon: const Icon(Icons.edit_outlined),
-            onPressed: () => Navigator.pushNamed(
-              context,
-              AppRoutes.formulario,
-              arguments: o,
-            ),
-          ),
-          IconButton(
-            tooltip: 'Excluir',
-            icon: const Icon(Icons.delete_outline),
-            onPressed: () => _excluir(context, o),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Detalhes da ocorrência')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -98,36 +76,18 @@ class DetalhesScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 26,
-                        backgroundColor: AppTheme.primaria.withValues(
-                          alpha: 0.1,
-                        ),
-                        child: Icon(
-                          o.categoria.icon,
-                          color: AppTheme.primaria,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          o.categoria.label,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: AppTheme.primaria,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    o.categoria.label,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: AppTheme.primaria,
+                    ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 8),
                   Text(o.titulo, style: theme.textTheme.titleLarge),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       TagChip.status(o.status),
                       TagChip.prioridade(o.prioridade),
@@ -135,7 +95,6 @@ class DetalhesScreen extends StatelessWidget {
                         const TagChip(
                           texto: 'Risco à segurança',
                           cor: Color(0xFFC62828),
-                          icone: Icons.health_and_safety_outlined,
                         ),
                     ],
                   ),
@@ -151,7 +110,7 @@ class DetalhesScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Descrição', style: theme.textTheme.titleSmall),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Text(o.descricao, style: theme.textTheme.bodyLarge),
                 ],
               ),
@@ -161,43 +120,27 @@ class DetalhesScreen extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                _InfoTile(
-                  icone: Icons.signpost_outlined,
-                  titulo: 'Endereço',
-                  valor: o.endereco,
-                ),
+                _InfoTile(titulo: 'Endereço', valor: o.endereco),
+                const Divider(height: 1),
+                _InfoTile(titulo: 'Bairro', valor: o.bairro),
                 const Divider(height: 1),
                 _InfoTile(
-                  icone: Icons.place_outlined,
-                  titulo: 'Bairro',
-                  valor: o.bairro,
-                ),
-                const Divider(height: 1),
-                _InfoTile(
-                  icone: Icons.event_outlined,
                   titulo: 'Reportada em',
-                  valor:
-                      '${Formatters.dataHora(o.criadoEm)} (${Formatters.relativo(o.criadoEm)})',
+                  valor: Formatters.dataHora(o.criadoEm),
                 ),
                 const Divider(height: 1),
                 _InfoTile(
-                  icone: Icons.tag,
                   titulo: 'Protocolo',
                   valor: '#${o.id.toString().padLeft(5, '0')}',
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           if (!o.resolvida) ...[
-            FilledButton.icon(
+            FilledButton(
               onPressed: () => _avancarStatus(context, o),
-              icon: Icon(
-                o.status == StatusOcorrencia.aberta
-                    ? Icons.build_circle_outlined
-                    : Icons.check_circle_outline,
-              ),
-              label: Text(
+              child: Text(
                 o.status == StatusOcorrencia.aberta
                     ? 'Marcar como em andamento'
                     : 'Marcar como resolvida',
@@ -205,24 +148,22 @@ class DetalhesScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
-          OutlinedButton.icon(
+          OutlinedButton(
             onPressed: () => Navigator.pushNamed(
               context,
               AppRoutes.formulario,
               arguments: o,
             ),
-            icon: const Icon(Icons.edit_outlined),
-            label: const Text('Editar'),
+            child: const Text('Editar'),
           ),
           const SizedBox(height: 12),
-          OutlinedButton.icon(
+          OutlinedButton(
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.red.shade700,
               side: BorderSide(color: Colors.red.shade200),
             ),
             onPressed: () => _excluir(context, o),
-            icon: const Icon(Icons.delete_outline),
-            label: const Text('Excluir'),
+            child: const Text('Excluir'),
           ),
         ],
       ),
@@ -231,20 +172,14 @@ class DetalhesScreen extends StatelessWidget {
 }
 
 class _InfoTile extends StatelessWidget {
-  const _InfoTile({
-    required this.icone,
-    required this.titulo,
-    required this.valor,
-  });
+  const _InfoTile({required this.titulo, required this.valor});
 
-  final IconData icone;
   final String titulo;
   final String valor;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icone, color: AppTheme.primaria),
       title: Text(
         titulo,
         style: TextStyle(fontSize: 12, color: Colors.grey.shade700),

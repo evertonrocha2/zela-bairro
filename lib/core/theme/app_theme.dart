@@ -27,20 +27,20 @@ class AppTheme {
         elevation: 0,
         titleTextStyle: TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           color: Colors.white,
         ),
       ),
       textTheme: base.textTheme.copyWith(
         headlineSmall: base.textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w600,
           color: primaria,
         ),
         titleLarge: base.textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
         ),
         titleMedium: base.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
         ),
       ),
       cardTheme: CardThemeData(
@@ -67,7 +67,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -76,7 +76,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
